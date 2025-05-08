@@ -1,0 +1,138 @@
+version: '3.8'
+
+services:
+  # === HAProxy Load Balancer ===
+  haproxy:
+    image: haproxy:latest
+    container_name: haproxy
+    ports:
+      - "80:80"
+      - "443:443"
+      - "3478:3478/udp"
+      - "8404:8404"  # Stats page
+    volumes:
+      - ./haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
+      - ./haproxy/certs:/usr/local/etc/haproxy/certs:ro
+    restart: unless-stopped
+    networks:
+      meet.jitsi:
+
+  # === Certbot for Let's Encrypt ===
+  certbot:
+    image: certbot/certbot
+    container_name: certbot
+    volumes:
+      - ./haproxy/certs:/etc/letsencrypt
+      - ./haproxy/webroot:/var/www/certbot
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do sleep 12h & wait $${!}; certbot renew --webroot -w /var/www/certbot --quiet; done'"
+    restart: unless-stopped
+    networks:
+      meet.jitsi:
+
+  # === HAProxy Web Interface ===
+  haproxy-wi:
+    image: azgrafx/haproxy-wi:latest
+    container_name: haproxy-wi
+    ports:
+      - "8080:80"
+    volumes:
+      - ./haproxy-wi/data:/var/www/haproxy-wi/app
+      - ./haproxy-wi/mysql:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=secret
+    restart: unless-stopped
+    networks:
+      meet.jitsi:
+
+  # === Coturn (TURN server) ===
+  turn:
+    image: instrumentisto/coturn
+    container_name: coturn
+    ports:
+      - "3478:3478/udp"
+      - "3478:3478/tcp"
+    volumes:
+      - ./coturn/turnserver.conf:/etc/coturn/turnserver.conf
+    restart: unless-stopped
+    networks:
+      meet.jitsi:
+
+  # === Keycloak (OIDC Provider) ===
+  keycloak:
+    image: quay.io/keycloak/keycloak:latest
+    container_name: keycloak
+    command: start-dev
+    ports:
+      - "8081:8080"
+    environment:
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=admin
+    volumes:
+      - ./keycloak/data:/opt/keycloak/data
+    restart: unless-stopped
+    networks:
+      meet.jitsi:
+
+  # === Prometheus ===
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./prometheus/data:/prometheus
+    restart: unless-stopped
+    networks:
+      meet.jitsi:
+
+  # === Grafana ===
+  grafana:
+    image: grafana/grafana-oss:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./grafana:/var/lib/grafana
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    depends_on:
+      - prometheus
+    restart: unless-stopped
+    networks:
+      meet.jitsi:
+
+  # === Node exporter ===
+  node-exporter:
+    image: prom/node-exporter
+    container_name: node_exporter
+    ports:
+      - "9100:9100"
+    pid: "host"
+    restart: unless-stopped
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    networks:
+      meet.jitsi:
+      
+  # === Apache PHP Server ===
+  apache-php:
+    image: php:8.2-apache
+    container_name: apache-php
+    ports:
+      - "8888:80"
+    volumes:
+      - ./apache-php/html:/var/www/html
+      - ./apache-php/custom.ini:/usr/local/etc/php/conf.d/custom.ini
+    restart: unless-stopped
+    networks:
+      meet.jitsi:
+
+volumes:
+  # define if you want named volumes instead of bind mounts
+  # e.g. grafana-data:
+
+networks:
+  meet.jitsi:
