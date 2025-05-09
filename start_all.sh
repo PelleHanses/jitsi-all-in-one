@@ -39,7 +39,7 @@ mkdir ../../jitsi_custom
 rsync -a ./ ../../jitsi_custom/
 cp ../../jitsi_custom/env.example ../../jitsi_custom/.env
 cd ../../../
-rm -fr ./jitsi_git
+rm -fr ./data/jitsi_git
 
 ## -------- Fix Jitsi .env -----------
 INPUT_FILE="data/jitsi-variables.lst"
