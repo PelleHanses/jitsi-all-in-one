@@ -1,10 +1,10 @@
 #!/bin/bash
 # Starts all containers
 
-cd /opt/jitsi-all-in-one
-
-
 ## All other but JItsi
+mkdir data/grafana data/prometheus -p
+chmod 777 data/grafana
+chmod 777 data/prometheus
 echo "Starts all other but JItsi"
 docker compose up -d
 
