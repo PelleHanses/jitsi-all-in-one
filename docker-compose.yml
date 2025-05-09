@@ -30,19 +30,19 @@ services:
       meet.jitsi:
 
   # === HAProxy Web Interface ===
-  haproxy-wi:
-    image: azgrafx/haproxy-wi:latest
-    container_name: haproxy-wi
-    ports:
-      - "8080:80"
-    volumes:
-      - ./haproxy-wi/data:/var/www/haproxy-wi/app
-      - ./haproxy-wi/mysql:/var/lib/mysql
-    environment:
-      - MYSQL_ROOT_PASSWORD=secret
-    restart: unless-stopped
-    networks:
-      meet.jitsi:
+#  haproxy-wi:
+#    image: azgrafx/haproxy-wi:latest
+#    container_name: haproxy-wi
+#    ports:
+#      - "8080:80"
+#    volumes:
+#      - ./haproxy-wi/data:/var/www/haproxy-wi/app
+#      - ./haproxy-wi/mysql:/var/lib/mysql
+#    environment:
+#      - MYSQL_ROOT_PASSWORD=secret
+#    restart: unless-stopped
+#    networks:
+#      meet.jitsi:
 
   # === Coturn (TURN server) ===
   turn:
