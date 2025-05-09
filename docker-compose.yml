@@ -11,8 +11,8 @@ services:
       - "3478:3478/udp"
       - "8404:8404"  # Stats page
     volumes:
-      - ./haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
-      - ./haproxy/certs:/usr/local/etc/haproxy/certs:ro
+      - ./data/haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
+      - ./data/haproxy/certs:/usr/local/etc/haproxy/certs:ro
     restart: unless-stopped
     networks:
       meet.jitsi:
@@ -22,8 +22,8 @@ services:
     image: certbot/certbot
     container_name: certbot
     volumes:
-      - ./haproxy/certs:/etc/letsencrypt
-      - ./haproxy/webroot:/var/www/certbot
+      - ./data/haproxy/certs:/etc/letsencrypt
+      - ./data/haproxy/webroot:/var/www/certbot
     entrypoint: "/bin/sh -c 'trap exit TERM; while :; do sleep 12h & wait $${!}; certbot renew --webroot -w /var/www/certbot --quiet; done'"
     restart: unless-stopped
     networks:
@@ -36,8 +36,8 @@ services:
 #    ports:
 #      - "8080:80"
 #    volumes:
-#      - ./haproxy-wi/data:/var/www/haproxy-wi/app
-#      - ./haproxy-wi/mysql:/var/lib/mysql
+#      - ./data/haproxy-wi/data:/var/www/haproxy-wi/app
+#      - ./data/haproxy-wi/mysql:/var/lib/mysql
 #    environment:
 #      - MYSQL_ROOT_PASSWORD=secret
 #    restart: unless-stopped
@@ -52,7 +52,7 @@ services:
       - "3478:3478/udp"
       - "3478:3478/tcp"
     volumes:
-      - ./coturn/turnserver.conf:/etc/coturn/turnserver.conf
+      - ./data/coturn/turnserver.conf:/etc/coturn/turnserver.conf
     restart: unless-stopped
     networks:
       meet.jitsi:
@@ -68,7 +68,7 @@ services:
       - KEYCLOAK_ADMIN=admin
       - KEYCLOAK_ADMIN_PASSWORD=admin
     volumes:
-      - ./keycloak/data:/opt/keycloak/data
+      - ./data/keycloak/data:/opt/keycloak/data
     restart: unless-stopped
     networks:
       meet.jitsi:
@@ -80,8 +80,8 @@ services:
     ports:
       - "9090:9090"
     volumes:
-      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
-      - ./prometheus/data:/prometheus
+      - ./data/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./data/prometheus/data:/prometheus
     restart: unless-stopped
     networks:
       meet.jitsi:
@@ -93,7 +93,7 @@ services:
     ports:
       - "3000:3000"
     volumes:
-      - ./grafana:/var/lib/grafana
+      - ./data/grafana:/var/lib/grafana
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=admin
     depends_on:
@@ -124,8 +124,8 @@ services:
     ports:
       - "8888:80"
     volumes:
-      - ./apache-php/html:/var/www/html
-      - ./apache-php/custom.ini:/usr/local/etc/php/conf.d/custom.ini
+      - ./data/apache-php/html:/var/www/html
+      - ./data/apache-php/custom.ini:/usr/local/etc/php/conf.d/custom.ini
     restart: unless-stopped
     networks:
       meet.jitsi:
