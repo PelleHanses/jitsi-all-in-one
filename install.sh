@@ -18,3 +18,10 @@ sudo apt install -y docker-ce
 sudo systemctl --no-pager status docker
 sudo usermod -aG docker $USER
 
+echo
+echo "---------------------------------------------------"
+echo "  Logga ut och in igen för att kunna köra docker   "
+echo "  Kör sen start_all.sh                             "
+echo "---------------------------------------------------"
+echo
+
