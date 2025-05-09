@@ -57,7 +57,7 @@ services:
       # Add any other Stream port you want to expose
       # - '8421:21' # FTP
     networks:
-      - meet.jitsi:
+      meet.jitsi:
     environment:
       DB_SQLITE_FILE: /data/nginxpm/database.sqlite
       # Uncomment this if IPv6 is not enabled on your host
