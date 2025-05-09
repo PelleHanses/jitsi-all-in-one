@@ -38,7 +38,7 @@ echo "  - Inside $target_dir"
 mkdir ../../jitsi_custom
 rsync -a ./ ../../jitsi_custom/
 cp ../../jitsi_custom/env.example ../../jitsi_custom/.env
-cd ../..
+cd ../../../
 rm -fr ./jitsi_git
 
 ## Fix Jitsi .env
