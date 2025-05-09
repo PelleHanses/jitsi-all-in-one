@@ -2,32 +2,32 @@ version: '3.8'
 
 services:
   # === HAProxy Load Balancer ===
-  haproxy:
-    image: haproxy:latest
-    container_name: haproxy
-    ports:
-      - "80:80"
-      - "443:443"
-      - "3478:3478/udp"
-      - "8404:8404"  # Stats page
-    volumes:
-      - ./data/haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
-      - ./data/haproxy/certs:/usr/local/etc/haproxy/certs:ro
-    restart: unless-stopped
-    networks:
-      meet.jitsi:
+#  haproxy:
+#    image: haproxy:latest
+#    container_name: haproxy
+#    ports:
+#      - "80:80"
+#      - "443:443"
+#      - "3478:3478/udp"
+#      - "8404:8404"  # Stats page
+#    volumes:
+#      - ./data/haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
+#      - ./data/haproxy/certs:/usr/local/etc/haproxy/certs:ro
+#    restart: unless-stopped
+#    networks:
+#      meet.jitsi:
 
   # === Certbot for Let's Encrypt ===
-  certbot:
-    image: certbot/certbot
-    container_name: certbot
-    volumes:
-      - ./data/haproxy/certs:/etc/letsencrypt
-      - ./data/haproxy/webroot:/var/www/certbot
-    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do sleep 12h & wait $${!}; certbot renew --webroot -w /var/www/certbot --quiet; done'"
-    restart: unless-stopped
-    networks:
-      meet.jitsi:
+#  certbot:
+#    image: certbot/certbot
+#    container_name: certbot
+#    volumes:
+#      - ./data/haproxy/certs:/etc/letsencrypt
+#      - ./data/haproxy/webroot:/var/www/certbot
+#    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do sleep 12h & wait $${!}; certbot renew --webroot -w /var/www/certbot --quiet; done'"
+#    restart: unless-stopped
+#    networks:
+#      meet.jitsi:
 
   # === HAProxy Web Interface ===
 #  haproxy-wi:
@@ -43,6 +43,28 @@ services:
 #    restart: unless-stopped
 #    networks:
 #      meet.jitsi:
+
+  nginxpm:
+    image: 'jc21/nginx-proxy-manager:2.12.3'
+      #image: 'jc21/nginx-proxy-manager:2.9.22'
+    container_name: proxy_Nginx_Proxy_Manager
+    restart: unless-stopped
+    ports:
+      # These ports are in format <host-port>:<container-port>
+      - '80:80' # Public HTTP Port
+      - '443:443' # Public HTTPS Port
+      - '81:81' # Admin Web Port
+      # Add any other Stream port you want to expose
+      # - '8421:21' # FTP
+    networks:
+      - meet.jitsi:
+    environment:
+      DB_SQLITE_FILE: /data/nginxpm/database.sqlite
+      # Uncomment this if IPv6 is not enabled on your host
+      # DISABLE_IPV6: 'true'
+    volumes:
+      - ./data/nginxpm/:/data
+      - ./data/letsencrypt:/etc/letsencrypt
 
   # === Coturn (TURN server) ===
   turn:
