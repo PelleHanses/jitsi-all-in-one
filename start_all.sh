@@ -34,9 +34,9 @@ echo " - Subfolder = $target_dir"
 cd "$target_dir" || { echo "Failed to cd into extracted directory"; exit 1; }
 echo "  - Inside $target_dir"
 
-mkdir jitsi_custom
+mkdir ../../jitsi_custom
 rsync -a ./ ../../jitsi_custom/
-cd ..
+cd ../..
 rm -fr ./jitsi_git
 
 # Optional: Confirm where you are
