@@ -67,7 +67,10 @@ echo "Uppdatering klar."
 cd data/jitsi_custom
 ./gen-passwords.sh
 
-
+echo " - Startar Jitsi"
+docker compose up -d
+echo 
+docker ps
 echo
 echo "-----------------------------------"
 echo "              Klart                "
