@@ -24,4 +24,3 @@ echo "  Logga ut och in igen för att kunna köra docker   "
 echo "  Kör sen start_all.sh                             "
 echo "---------------------------------------------------"
 echo
-
