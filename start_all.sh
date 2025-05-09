@@ -41,7 +41,7 @@ cp ../../jitsi_custom/env.example ../../jitsi_custom/.env
 cd ../../../
 rm -fr ./jitsi_git
 
-## Fix Jitsi .env
+## -------- Fix Jitsi .env -----------
 INPUT_FILE="data/jitsi-variables.lst"
 ENV_FILE="data/jitsi_custom/.env"
 
@@ -62,3 +62,14 @@ while IFS='=' read -r key value; do
 done < "$INPUT_FILE"
 
 echo "Uppdatering klar."
+
+## --------- Fix Jitsi passwords -------
+cd data/jitsi_custom
+./gen-passwords.sh
+
+
+echo
+echo "-----------------------------------"
+echo "              Klart                "
+echo "-----------------------------------"
+echo
