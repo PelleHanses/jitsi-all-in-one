@@ -122,7 +122,7 @@ services:
     image: php:8.2-apache
     container_name: apache-php
     ports:
-      - "8888:80"
+      - "8280:80"
     volumes:
       - ./data/apache-php/html:/var/www/html
       - ./data/apache-php/custom.ini:/usr/local/etc/php/conf.d/custom.ini
