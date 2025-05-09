@@ -130,7 +130,7 @@ services:
     networks:
       meet.jitsi:
 
-volumes:
+#volumes:
   # define if you want named volumes instead of bind mounts
   # e.g. grafana-data:
 
