@@ -24,18 +24,21 @@ url=$(curl -s https://api.github.com/repos/jitsi/docker-jitsi-meet/releases/late
 wget -O jitsi_latest.zip "$url"
 
 # Extract the zip into a known directory
-unzip jitsi_latest.zip -d jitsi_custom
+unzip jitsi_latest.zip -d jitsi_git
 
 # Find the actual subfolder (GitHub names it like jitsi-docker-jitsi-meet-abcdef)
-target_dir=$(find jitsi_custom -maxdepth 1 -mindepth 1 -type d)
+target_dir=$(find jitsi_git -maxdepth 1 -mindepth 1 -type d)
 echo " - Subfolder = $target_dir"
 
 # Enter the extracted directory
 cd "$target_dir" || { echo "Failed to cd into extracted directory"; exit 1; }
 echo "  - Inside $target_dir"
 
-mv * ../
-mv .* ../
+mkdir jitsi_custom
+mv * ../jitsi_custom/
+mv .* ../jitsi_custom/
+cd ..
+rm -fr ./jitsi_git
 
 # Optional: Confirm where you are
 pwd
