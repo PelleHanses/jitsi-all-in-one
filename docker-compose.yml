@@ -73,9 +73,16 @@ services:
     ports:
       - "3478:3478/udp"
       - "3478:3478/tcp"
+      - "5439:5439"
+      - "5439:5439/udp"
     volumes:
       - ./data/coturn/turnserver.conf:/etc/coturn/turnserver.conf
+      - ./data/coturn/turnserver.log:/etc/coturn/turnserver.log
     restart: unless-stopped
+    command:
+      - "turnserver"
+      - "-c"
+      - "/etc/coturn/turnserver.conf"
     networks:
       meet.jitsi:
 
