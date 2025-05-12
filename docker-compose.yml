@@ -76,8 +76,8 @@ services:
       - "5439:5439"
       - "5439:5439/udp"
     volumes:
-      - ./data/coturn/turnserver.conf:/etc/coturn/turnserver.conf
-      - ./data/coturn/turnserver.log:/etc/coturn/turnserver.log
+      - ./data/coturn/turnserver.conf:/etc/coturn/turnserver.conf:z
+      - ./data/coturn/turnserver.log:/etc/coturn/turnserver.log:z
     restart: unless-stopped
     command:
       - "turnserver"
