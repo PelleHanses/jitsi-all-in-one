@@ -1,6 +1,8 @@
 #!/bin/bash
 # Starts all containers
 
+current_path=$(pwd)
+
 ## All other but JItsi
 mkdir data/grafana data/prometheus -p
 chmod 777 data/grafana
@@ -17,7 +19,11 @@ echo "-------------------------------------------------"
 echo
 
 ## Jitsi
-cd data
+echo "  - Path: $current_path"
+cd $current_path
+mkdir tt
+cd tt
+pwd
 # Get the latest zipball URL
 url=$(curl -s https://api.github.com/repos/jitsi/docker-jitsi-meet/releases/latest | grep 'zipball_url' | cut -d\" -f4)
 
@@ -35,15 +41,16 @@ echo " - Subfolder = $target_dir"
 cd "$target_dir" || { echo "Failed to cd into extracted directory"; exit 1; }
 echo "  - Inside $target_dir"
 
-mkdir ../../jitsi_custom
-rsync -a ./ ../../jitsi_custom/
-cp ../../jitsi_custom/env.example ../../jitsi_custom/.env
-cd ../../../
-rm -fr ./data/jitsi_git
+mkdir $current_path/jitsi_custom
+rsync -a ./ $current_path/jitsi_custom/
+cp $current_path/jitsi_custom/env.example $current_path/jitsi_custom/.env
+cd $current_path
+rm -fr ./tt
+cd $current_path/jitsi_custom
 
 ## -------- Fix Jitsi .env -----------
-INPUT_FILE="data/jitsi-variables.lst"
-ENV_FILE="data/jitsi_custom/.env"
+INPUT_FILE="$current_path/data/jitsi-variables.lst"
+ENV_FILE="$current_path/jitsi_custom/.env"
 
 # Skapa .env-filen om den inte finns
 touch "$ENV_FILE"
@@ -64,7 +71,7 @@ done < "$INPUT_FILE"
 echo "Uppdatering klar."
 
 ## --------- Fix Jitsi passwords -------
-cd data/jitsi_custom
+cd $current_path/jitsi_custom
 ./gen-passwords.sh
 
 echo " - Startar Jitsi"
