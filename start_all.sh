@@ -68,14 +68,39 @@ while IFS='=' read -r key value; do
   fi
 done < "$INPUT_FILE"
 
+echo "  - Kopierar in custom-config.js"
+cat $current_path/data/jitsi_custom/custom-config.js >> $current_path/jitsi_custom/custom-config.js
+#cp $current_path/data/jitsi_custom/custom-config.js $current_path/jitsi_custom/
+
 echo "Uppdatering klar."
+
+## --------- Fix docker-compose.yml ---------
+#- ./custom-config.js:/config/custom-config.js:Z
+#
+input_file="docker-compose.yml"
+output_file="docker-compose.new.yml"
+insert_line="            - ./custom-config.js:/config/custom-config.js:Z"
+found_volumes=0
+
+awk -v insert="$insert_line" '
+  $0 ~ /^[[:space:]]*web:/ { in_web=1 }
+  in_web && /^[[:space:]]*volumes:/ {
+    print
+    print insert
+    found_volumes=1
+    next
+  }
+  { print }
+' "$input_file" > "$output_file"
+mv $output_file $input_file
+
 
 ## --------- Fix Jitsi passwords -------
 cd $current_path/jitsi_custom
 ./gen-passwords.sh
 
 echo " - Startar Jitsi"
-docker compose up -d
+#docker compose up -d
 echo 
 docker ps
 echo
